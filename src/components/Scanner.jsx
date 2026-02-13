@@ -298,7 +298,7 @@ const Scanner = () => {
                                                     Congratulations!
                                                 </h3>
                                                 <p className="text-sm text-gray-300 font-medium mb-3 max-w-xs mx-auto leading-tight">
-                                                    Your face structure matches 3+ partner agencies.
+                                                    You have an in demand look
                                                 </p>
                                                 <button
                                                     onClick={() => setShowApplyForm(true)}
