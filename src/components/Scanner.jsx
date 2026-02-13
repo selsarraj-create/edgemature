@@ -41,7 +41,7 @@ const Scanner = () => {
             // For this task verify flow, we usually need a fallback if backend isn't running.
             let result;
             try {
-                const response = await axios.post(`${apiUrl}/analyze`, formData, {
+                const response = await axios.post(`${apiUrl}/api/analyze`, formData, {
                     headers: { 'Content-Type': 'multipart/form-data' },
                     timeout: 8000 // Short timeout for demo fallback
                 });
