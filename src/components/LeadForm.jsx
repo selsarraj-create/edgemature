@@ -59,7 +59,7 @@ const LeadForm = ({ analysisData, imageBlob, onSubmitSuccess, onCancel }) => {
                 const filename = `${cleanEmail}_${timestamp}${ext}`;
 
                 const { data: uploadData, error: uploadError } = await supabase.storage
-                    .from('lead-images')
+                    .from('leads')
                     .upload(filename, imageBlob, {
                         contentType: imageBlob.type || 'image/jpeg',
                     });
@@ -69,7 +69,7 @@ const LeadForm = ({ analysisData, imageBlob, onSubmitSuccess, onCancel }) => {
                     // Continue without image — non-blocking
                 } else {
                     const { data: urlData } = supabase.storage
-                        .from('lead-images')
+                        .from('leads')
                         .getPublicUrl(filename);
                     image_url = urlData?.publicUrl || null;
                 }
