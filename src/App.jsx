@@ -2,17 +2,22 @@ import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Scanner from './components/Scanner';
 import Dashboard from './components/Dashboard';
+import Testimonials from './components/Testimonials';
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={
-          <div className="min-h-screen bg-black text-white relative overflow-hidden">
+          <div className="min-h-screen bg-black text-white relative overflow-hidden font-sans">
             <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-12">
               <Scanner />
             </div>
-            <footer className="relative z-10 text-center pb-8 px-4">
+
+            {/* Testimonials Section */}
+            <Testimonials />
+
+            <footer className="relative z-10 text-center pb-8 px-4 border-t border-white/5 pt-8 mt-12 bg-black">
               <p className="text-gray-600 text-xs font-medium">
                 Evaluation provided by Agency Scout AI.
                 <br />We are not a modeling agency and do not guarantee work.
@@ -26,5 +31,6 @@ function App() {
     </BrowserRouter>
   );
 }
+
 
 export default App;

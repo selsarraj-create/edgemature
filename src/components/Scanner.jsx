@@ -165,6 +165,11 @@ const Scanner = () => {
                             Select Photo
                         </button>
 
+                        <p className="mt-4 text-[10px] text-gray-500 font-medium flex items-center gap-1.5 opacity-60">
+                            <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                            Secure & Private. Photos used for analysis purposes only.
+                        </p>
+
                         {import.meta.env.DEV && (
                             <button
                                 onClick={(e) => { e.stopPropagation(); setState('PROCESSING'); setTimeout(() => setAnalysisResult(MOCK_RESULT), 2000); }}
