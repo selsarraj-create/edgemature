@@ -113,12 +113,13 @@ const LeadForm = ({ analysisData, imageBlob, onSubmitSuccess, onCancel }) => {
 
             if (insertError) throw insertError;
 
-            // Trigger Google Ads Conversion
-            if (window.gtag) {
-                window.gtag('event', 'conversion', {
-                    'send_to': 'AW-CONVERSION_ID/CONVERSION_LABEL'
-                });
-            }
+            // Push conversion event to GTM dataLayer
+            window.dataLayer = window.dataLayer || [];
+            window.dataLayer.push({
+                'event': 'lead_form_submit',
+                'lead_score': analysisData?.suitability_score || 0,
+                'lead_category': analysisData?.market_categorization?.primary || 'Unknown'
+            });
 
             setSuccess(true);
             setTimeout(() => {
