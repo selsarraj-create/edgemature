@@ -19,10 +19,10 @@ function App() {
 
             <footer className="relative z-10 text-center pb-8 px-4 border-t border-white/5 pt-8 mt-12 bg-black">
               <p className="text-gray-600 text-xs font-medium">
-                Evaluation provided by Agency Scout AI.
+                Evaluation provided by Edge Talent AI.
                 <br />We are not a modeling agency and do not guarantee work.
               </p>
-              <p className="text-gray-700 text-xs mt-2">&copy; 2026 AGENCY SCOUT</p>
+              <p className="text-gray-700 text-xs mt-2">&copy; 2026 Edge Talent</p>
             </footer>
           </div>
         } />
