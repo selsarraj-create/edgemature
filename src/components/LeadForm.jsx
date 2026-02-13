@@ -6,7 +6,7 @@ const LeadForm = ({ analysisData, imageBlob, onSubmitSuccess, onCancel }) => {
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
-        age: 32,
+        age: '',
         gender: '',
         phone: '',
         email: '',
@@ -25,6 +25,31 @@ const LeadForm = ({ analysisData, imageBlob, onSubmitSuccess, onCancel }) => {
         setError(null);
 
         try {
+            // 0. Check for duplicate email or phone
+            const { data: existingEmail } = await supabase
+                .from('mature')
+                .select('id')
+                .eq('email', formData.email)
+                .limit(1);
+
+            if (existingEmail && existingEmail.length > 0) {
+                setError('This email has already been used to apply.');
+                setLoading(false);
+                return;
+            }
+
+            const { data: existingPhone } = await supabase
+                .from('mature')
+                .select('id')
+                .eq('phone', formData.phone)
+                .limit(1);
+
+            if (existingPhone && existingPhone.length > 0) {
+                setError('This phone number has already been used to apply.');
+                setLoading(false);
+                return;
+            }
+
             // 1. Upload photo to Supabase Storage
             let image_url = null;
             if (imageBlob) {
