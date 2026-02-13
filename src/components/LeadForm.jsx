@@ -25,6 +25,23 @@ const LeadForm = ({ analysisData, imageBlob, onSubmitSuccess, onCancel }) => {
         setLoading(true);
         setError(null);
 
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData.email)) {
+            setError('Please enter a valid email address.');
+            setLoading(false);
+            return;
+        }
+
+        // UK phone validation (07xxx, +447xxx, 00447xxx)
+        const phone = formData.phone.replace(/[\s\-()]/g, '');
+        const ukPhoneRegex = /^(?:(?:\+44|0044)7\d{9}|07\d{9})$/;
+        if (!ukPhoneRegex.test(phone)) {
+            setError('Please enter a valid UK mobile number (e.g. 07700 000000).');
+            setLoading(false);
+            return;
+        }
+
         try {
             // 0. Check for duplicate email or phone
             const { data: existingEmail } = await supabase
