@@ -4,10 +4,10 @@ import { Star } from 'lucide-react';
 const testimonials = [
     {
         name: "Sarah",
-        age: 36,
+        age: 54,
         text: "I always thought I was 'too old' to start modeling. The analysis gave me the confidence to apply, and I booked my first commercial campaign three weeks later.",
         role: "Commercial Model",
-        image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200&h=200"
+        image: "https://images.unsplash.com/photo-1566616213894-2dcdcf0dfdae?auto=format&fit=crop&q=80&w=200&h=200"
     },
     {
         name: "Marcus",
