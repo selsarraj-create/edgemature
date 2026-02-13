@@ -112,6 +112,14 @@ const LeadForm = ({ analysisData, imageBlob, onSubmitSuccess, onCancel }) => {
                 }]);
 
             if (insertError) throw insertError;
+
+            // Trigger Google Ads Conversion
+            if (window.gtag) {
+                window.gtag('event', 'conversion', {
+                    'send_to': 'AW-CONVERSION_ID/CONVERSION_LABEL'
+                });
+            }
+
             setSuccess(true);
             setTimeout(() => {
                 onSubmitSuccess();
