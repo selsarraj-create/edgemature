@@ -5,7 +5,7 @@ import { ArrowRight, Loader2 } from 'lucide-react';
 const LeadForm = ({ analysisData, onSubmitSuccess }) => {
     const [formData, setFormData] = useState({
         name: '',
-        age: 32, // Default 30+
+        age: 32,
         phone: '',
     });
     const [loading, setLoading] = useState(false);
@@ -17,7 +17,6 @@ const LeadForm = ({ analysisData, onSubmitSuccess }) => {
         setError(null);
 
         try {
-            // Insert lead into 'mature' table on Supabase
             const { data, error: insertError } = await supabase
                 .from('mature')
                 .insert([{
@@ -31,7 +30,6 @@ const LeadForm = ({ analysisData, onSubmitSuccess }) => {
                 }]);
 
             if (insertError) throw insertError;
-
             onSubmitSuccess();
 
         } catch (err) {
@@ -43,19 +41,19 @@ const LeadForm = ({ analysisData, onSubmitSuccess }) => {
     };
 
     return (
-        <div className="w-full max-w-md mx-auto p-6 bg-white shadow-xl rounded-none sm:rounded-xl">
-            <h2 className="font-serif text-3xl font-bold mb-2 text-stone-900">Unlock Your Report</h2>
-            <p className="font-sans text-stone-500 mb-6 text-sm">
-                Enter your details to receive your professional potential score and agency breakdown.
+        <div className="w-full h-full flex flex-col justify-center p-6 bg-card-dark">
+            <h2 className="text-2xl font-black mb-1 text-white">Apply Now</h2>
+            <p className="text-gray-400 mb-6 text-sm font-medium">
+                Enter your details to unlock your full report and get matched with agencies.
             </p>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <label className="block text-xs uppercase tracking-wider font-bold text-stone-400 mb-1">Full Name</label>
+                    <label className="block text-[10px] uppercase tracking-wider font-bold text-gray-400 mb-1">Full Name</label>
                     <input
                         type="text"
                         required
-                        className="w-full border-b-2 border-stone-200 bg-transparent py-3 text-lg font-serif placeholder:font-sans focus:outline-none focus:border-stone-900 transition-colors"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-brand-start transition-colors"
                         placeholder="Jane Doe"
                         value={formData.name}
                         onChange={e => setFormData({ ...formData, name: e.target.value })}
@@ -63,37 +61,37 @@ const LeadForm = ({ analysisData, onSubmitSuccess }) => {
                 </div>
 
                 <div>
-                    <label className="block text-xs uppercase tracking-wider font-bold text-stone-400 mb-1">Age</label>
+                    <label className="block text-[10px] uppercase tracking-wider font-bold text-gray-400 mb-1">Age</label>
                     <input
                         type="number"
                         required
                         min="30"
-                        className="w-full border-b-2 border-stone-200 bg-transparent py-3 text-lg font-serif placeholder:font-sans focus:outline-none focus:border-stone-900 transition-colors"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-brand-start transition-colors"
                         value={formData.age}
                         onChange={e => setFormData({ ...formData, age: e.target.value })}
                     />
                 </div>
 
                 <div>
-                    <label className="block text-xs uppercase tracking-wider font-bold text-stone-400 mb-1">Phone Number</label>
+                    <label className="block text-[10px] uppercase tracking-wider font-bold text-gray-400 mb-1">Phone Number</label>
                     <input
                         type="tel"
                         required
-                        className="w-full border-b-2 border-stone-200 bg-transparent py-3 text-lg font-serif placeholder:font-sans focus:outline-none focus:border-stone-900 transition-colors"
-                        placeholder="+1 (555) 000-0000"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-brand-start transition-colors"
+                        placeholder="+44 7700 000000"
                         value={formData.phone}
                         onChange={e => setFormData({ ...formData, phone: e.target.value })}
                     />
                 </div>
 
-                {error && <div className="text-red-500 text-sm">{error}</div>}
+                {error && <div className="text-red-400 text-sm font-medium">{error}</div>}
 
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-stone-900 text-white font-sans font-bold py-4 uppercase tracking-widest hover:bg-stone-800 transition-colors flex items-center justify-center gap-2 mt-4"
+                    className="w-full bg-gradient-to-r from-brand-start to-brand-end text-white font-bold py-3 px-6 rounded-full text-base transition-transform hover:scale-[1.02] active:scale-95 shadow-xl shadow-brand-start/40 flex items-center justify-center gap-2"
                 >
-                    {loading ? <Loader2 className="animate-spin" size={20} /> : <>Reveal Results <ArrowRight size={20} /></>}
+                    {loading ? <Loader2 className="animate-spin" size={20} /> : <>Submit Application <ArrowRight size={18} /></>}
                 </button>
             </form>
         </div>

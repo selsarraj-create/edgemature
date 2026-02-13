@@ -4,17 +4,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 const ProcessingAnimation = ({ onComplete, hasResult }) => {
     const [textIndex, setTextIndex] = useState(0);
     const messages = [
-        "Analyzing Facial Structure...",
-        "Measuring Symmetry...",
-        "Evaluating Market Fit...",
-        "Calculating Potential..."
+        "Analyzing Facial Geometry...",
+        "Evaluating Symmetry...",
+        "Auditing Aesthetic Markers...",
+        "Cross-Referencing 2026 Trends..."
     ];
 
     useEffect(() => {
         const textInterval = setInterval(() => {
             setTextIndex((prev) => (prev + 1) % messages.length);
-        }, 1500);
-
+        }, 1200);
         return () => clearInterval(textInterval);
     }, []);
 
@@ -23,48 +22,41 @@ const ProcessingAnimation = ({ onComplete, hasResult }) => {
             onComplete();
             return;
         }
-
         const timeout = setTimeout(() => {
             if (!hasResult) {
                 console.warn("ProcessingAnimation timed out without result");
                 onComplete();
             }
         }, 15000);
-
         return () => clearTimeout(timeout);
     }, [hasResult, onComplete]);
 
     return (
-        <div className="relative w-full h-full flex flex-col items-center justify-center bg-stone-50 overflow-hidden">
-            {/* Minimalist Scan Line */}
-            <motion.div
-                className="absolute w-full h-[1px] bg-stone-900/20"
-                animate={{ top: ['0%', '100%', '0%'] }}
-                transition={{ duration: 3, ease: "linear", repeat: Infinity }}
-            />
+        <div className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden rounded-3xl">
+            {/* Laser Line */}
+            <div className="absolute top-0 left-0 w-full h-1 bg-brand-start shadow-[0_0_20px_rgba(59,130,246,0.8)] animate-scan z-20"></div>
 
-            <div className="z-10 text-center px-6">
-                <div className="mb-8">
-                    <div className="w-16 h-16 border border-stone-800 rounded-full mx-auto flex items-center justify-center animate-pulse">
-                        <div className="w-12 h-12 bg-stone-800 rounded-full" />
-                    </div>
-                </div>
+            {/* Corner Brackets */}
+            <div className="absolute inset-0 z-10 box-border p-2">
+                <div className="absolute top-2 left-2 w-8 h-8 border-t-4 border-l-4 border-brand-start"></div>
+                <div className="absolute top-2 right-2 w-8 h-8 border-t-4 border-r-4 border-brand-start"></div>
+                <div className="absolute bottom-2 left-2 w-8 h-8 border-b-4 border-l-4 border-brand-start"></div>
+                <div className="absolute bottom-2 right-2 w-8 h-8 border-b-4 border-r-4 border-brand-start"></div>
+            </div>
 
-                <h3 className="font-serif text-2xl mb-2 text-stone-900">Processing</h3>
-
-                <div className="h-6 overflow-hidden relative">
-                    <AnimatePresence mode="wait">
-                        <motion.p
-                            key={textIndex}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            className="text-stone-500 font-sans text-sm tracking-wide uppercase"
-                        >
-                            {messages[textIndex]}
-                        </motion.p>
-                    </AnimatePresence>
-                </div>
+            {/* Text Animation */}
+            <div className="z-30 relative text-center bg-black/80 px-8 py-4 rounded-full backdrop-blur-md border border-white/20 shadow-2xl mt-12">
+                <AnimatePresence mode="wait">
+                    <motion.p
+                        key={textIndex}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="text-brand-start font-black text-sm tracking-widest uppercase flex items-center gap-2"
+                    >
+                        <span className="w-2 h-2 rounded-full bg-brand-start animate-ping" /> {messages[textIndex]}
+                    </motion.p>
+                </AnimatePresence>
             </div>
         </div>
     );
