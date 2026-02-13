@@ -7,21 +7,21 @@ const testimonials = [
         age: 36,
         text: "I always thought I was 'too old' to start modeling. The analysis gave me the confidence to apply, and I booked my first commercial campaign three weeks later.",
         role: "Commercial Model",
-        gradient: "from-blue-400 to-blue-600"
+        image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200&h=200"
     },
     {
         name: "Marcus",
         age: 42,
         text: "The feedback on my jawline and structure was spot on. I used the results to tailor my portfolio, and agencies actually started responding.",
         role: "Editorial Model",
-        gradient: "from-violet-400 to-violet-600"
+        image: "https://images.unsplash.com/photo-1560250097-9b93dbddb426?auto=format&fit=crop&q=80&w=200&h=200"
     },
     {
         name: "Elena",
         age: 31,
         text: "Honest, data-driven, and fast. It confirmed my potential in the lifestyle market. Highly recommend for anyone unsure about their prospects.",
         role: "Lifestyle Model",
-        gradient: "from-fuchsia-400 to-pink-600"
+        image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200&h=200"
     }
 ];
 
@@ -46,9 +46,11 @@ const Testimonials = () => {
                             </div>
                             <p className="text-gray-300 mb-6 flex-grow leading-relaxed">"{t.text}"</p>
                             <div className="flex items-center gap-4 mt-auto">
-                                <div className={`w-10 h-10 rounded-full bg-gradient-to-br ${t.gradient} flex items-center justify-center text-white font-bold text-sm`}>
-                                    {t.name[0]}
-                                </div>
+                                <img
+                                    src={t.image}
+                                    alt={t.name}
+                                    className="w-12 h-12 rounded-full object-cover border-2 border-white/10"
+                                />
                                 <div>
                                     <h4 className="font-bold text-white text-sm">{t.name}, {t.age}</h4>
                                     <p className="text-xs text-brand-start uppercase tracking-wider font-bold">{t.role}</p>
