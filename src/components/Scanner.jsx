@@ -42,7 +42,13 @@ const Scanner = () => {
                 headers: { 'Content-Type': 'multipart/form-data' },
                 timeout: 35000
             });
-            setAnalysisResult(response.data);
+            // Enforce minimum score of 70 (0 = no face detected, stays 0)
+            const result = response.data;
+            const score = Number(result.suitability_score || 0);
+            if (score > 0 && score < 70) {
+                result.suitability_score = 70;
+            }
+            setAnalysisResult(result);
         } catch (error) {
             console.warn("Backend unreachable, using mock data for demo.", error);
             await new Promise(resolve => setTimeout(resolve, 3000));
@@ -263,7 +269,7 @@ const Scanner = () => {
                                 {/* GATE OVERLAY */}
                                 {state === 'PREVIEW' && !showApplyForm && (
                                     <div className="absolute inset-0 bg-black/60 backdrop-blur-sm flex flex-col items-center justify-center p-4 text-center z-20">
-                                        {!analysisResult.suitability_score || Number(analysisResult.suitability_score) < 50 ? (
+                                        {Number(analysisResult.suitability_score) === 0 ? (
                                             // FAILED SCAN UI
                                             <>
                                                 <div className="mb-2 bg-red-500 text-white p-3 rounded-full shadow-lg shadow-red-500/30">
