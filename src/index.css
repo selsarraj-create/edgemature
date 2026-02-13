@@ -1,6 +1,31 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* Custom theme using Tailwind v4 @theme directive */
+@theme {
+  --color-brand-start: #3B82F6;
+  --color-brand-end: #8B5CF6;
+  --color-surface-light: #F2F4F7;
+  --color-surface-dark: #000000;
+  --color-card-light: #FFFFFF;
+  --color-card-dark: #121212;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  --radius-3xl: 1.5rem;
+
+  --animate-scan: scan 4s linear infinite;
+  --animate-pulse-slow: pulse 4s ease-in-out infinite;
+
+  @keyframes scan {
+    0% {
+      top: 0%;
+    }
+
+    100% {
+      top: 100%;
+    }
+  }
+}
 
 body {
   background-color: #000000;
