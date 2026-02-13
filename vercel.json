@@ -1,14 +1,11 @@
 {
+    "buildCommand": "npm run build",
+    "outputDirectory": "dist",
+    "framework": "vite",
     "rewrites": [
         {
             "source": "/api/(.*)",
             "destination": "/api/server.py"
-        }
-    ],
-    "builds": [
-        {
-            "src": "api/server.py",
-            "use": "@vercel/python"
         }
     ]
 }
