@@ -17,64 +17,26 @@ const LeadForm = ({ analysisData, onSubmitSuccess }) => {
         setError(null);
 
         try {
-            // We use signUp to capture the lead in Auth + Metadata
-            // Since we don't need a password for this "Lead Capture" flow, 
-            // we'll generate a random distinct one or use a passwordless approach if configured.
-            // For now, assuming standard email/pass auth is the backend, we might need a dummy email/pass 
-            // OR we insert into a custom table. 
-            // Given the prompt "Lead capture form", and typical high-trust landing pages, 
-            // let's try to insert into a 'leads' table if it exists, OR use auth with a generated email if email isn't asked.
-            // Wait, the prompt says "Lead captures: Name, Age, and Phone". NO Email.
-            // Supabase Auth requires Email. 
-            // So we probably shouldn't use `supabase.auth.signUp` unless we generate a fake email.
-            // However, usually these systems have a `leads` table.
-            // I will assume there is a `leads` table or similar. 
-            // BUT, without knowing the schema, the safest bet for "Lead Capture" without email 
-            // is to try to RPC or just insert into a 'leads' table.
-            // Since I can't verify the schema, I will try to insert into a 'leads' table.
-            // If that fails, I'll fallback to logging it (or maybe I should have checked schema).
+            // Insert lead into 'mature' table on Supabase
+            const { data, error: insertError } = await supabase
+                .from('mature')
+                .insert([{
+                    name: formData.name,
+                    age: parseInt(formData.age),
+                    phone: formData.phone,
+                    lead_code: '#MOD30-SCOUT',
+                    score: analysisData?.suitability_score || 0,
+                    category: analysisData?.market_categorization?.primary || 'Unknown',
+                    analysis_json: analysisData || {},
+                }]);
 
-            // Actually, `agencymatch` had a `leads` or `profiles` table?
-            // `agencymatch` used `supabase.auth.signUp`.
-
-            // Text says "Lead captures: Name, Age, and Phone".
-            // It does NOT say Email.
-            // If I generate a fake email `phone@placeholder.com`, I can register them.
-
-            const fakeEmail = `${formData.phone.replace(/\D/g, '')}@agency-scout.temp`;
-            const fakePassword = `TempPass${Date.now()}!`;
-
-            const metadata = {
-                full_name: formData.name,
-                age: formData.age,
-                phone: formData.phone,
-                lead_code: '#MOD30-SCOUT',
-                analysis_result: analysisData
-            };
-
-            const { data, error: authError } = await supabase.auth.signUp({
-                email: fakeEmail,
-                password: fakePassword,
-                options: {
-                    data: metadata
-                }
-            });
-
-            if (authError) throw authError;
+            if (insertError) throw insertError;
 
             onSubmitSuccess();
 
         } catch (err) {
             console.error("Submission error:", err);
-            // If strictly auth error (like user already exists with that phone-email), we might just say success for the user's sake 
-            // on a landing page ("Thank you, we have your info").
-            // But let's show generic error if it's a hard failure.
-            if (err.message.includes("already registered")) {
-                // If they submitted before, just show success
-                onSubmitSuccess();
-            } else {
-                setError("Something went wrong. Please try again.");
-            }
+            setError("Something went wrong. Please try again.");
         } finally {
             setLoading(false);
         }
