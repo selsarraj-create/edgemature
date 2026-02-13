@@ -7,14 +7,14 @@ const testimonials = [
         age: 54,
         text: "I always thought I was 'too old' to start modeling. The analysis gave me the confidence to apply, and I booked my first commercial campaign three weeks later.",
         role: "Commercial Model",
-        image: "https://images.unsplash.com/photo-1566616213894-2dcdcf0dfdae?auto=format&fit=crop&q=80&w=200&h=200"
+        image: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?auto=format&fit=crop&q=80&w=200&h=200"
     },
     {
         name: "Mark",
         age: 42,
         text: "The feedback on my jawline and structure was spot on. I used the results to tailor my portfolio, and agencies actually started responding.",
         role: "Editorial Model",
-        image: "https://images.unsplash.com/photo-1556157382-97eda2d622ca?auto=format&fit=crop&q=80&w=200&h=200"
+        image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=200&h=200"
     },
     {
         name: "Elena",
