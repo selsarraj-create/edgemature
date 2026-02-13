@@ -102,7 +102,7 @@ const Scanner = () => {
     };
 
     return (
-        <div className="w-full max-w-4xl mx-auto min-h-[700px] flex flex-col items-center px-4 font-sans text-white transition-colors duration-300">
+        <div className="w-full max-w-4xl mx-auto flex flex-col items-center px-4 font-sans text-white transition-colors duration-300">
 
             {/* Header */}
             <div className="mb-4 text-center">

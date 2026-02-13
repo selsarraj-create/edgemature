@@ -10,7 +10,7 @@ function App() {
       <Routes>
         <Route path="/" element={
           <div className="min-h-screen bg-black text-white relative overflow-hidden font-sans">
-            <div className="relative z-10 flex flex-col items-center justify-center px-4 py-20">
+            <div className="relative z-10 flex flex-col items-center justify-center px-4 py-10">
               <Scanner />
             </div>
 
