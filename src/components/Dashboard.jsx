@@ -71,6 +71,7 @@ const Dashboard = () => {
                 postcode: lead.postcode,
                 gender: lead.gender,
                 lead_source: 'DATA LEAD',
+                image_url: lead.image_url || null,
             };
 
             const response = await fetch('/api/crm-webhook', {

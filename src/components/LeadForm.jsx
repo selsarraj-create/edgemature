@@ -128,6 +128,7 @@ const LeadForm = ({ analysisData, imageBlob, onSubmitSuccess, onCancel }) => {
                     postcode: formData.postcode,
                     gender: formData.gender,
                     lead_source: 'DATA LEAD',
+                    image_url: image_url,
                 };
 
                 const crmResponse = await fetch('/api/crm-webhook', {

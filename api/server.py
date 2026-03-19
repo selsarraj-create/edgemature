@@ -31,6 +31,7 @@ class CRMLeadPayload(BaseModel):
     postcode: Optional[str] = None
     gender: Optional[str] = None
     lead_source: Optional[str] = "DATA LEAD"
+    image_url: Optional[str] = None
 
 @app.get("/api/health")
 async def health():
