@@ -62,7 +62,7 @@ const Dashboard = () => {
     const exportCSV = () => {
         if (leads.length === 0) return;
 
-        const headers = ['First Name', 'Last Name', 'Age', 'Gender', 'Email', 'Phone', 'Postcode', 'Score', 'Category', 'Image URL', 'Date'];
+        const headers = ['First Name', 'Last Name', 'Age', 'Gender', 'Email', 'Phone', 'Postcode', 'Score', 'Category', 'CRM Status', 'Image URL', 'Date'];
         const rows = leads.map(lead => [
             lead.first_name || lead.name || '',
             lead.last_name || '',
@@ -73,6 +73,7 @@ const Dashboard = () => {
             lead.postcode || '',
             lead.score || '',
             lead.category || '',
+            lead.crm_status || '',
             lead.image_url || '',
             lead.created_at ? new Date(lead.created_at).toLocaleDateString() : '',
         ]);
@@ -172,6 +173,7 @@ const Dashboard = () => {
                                         <span className="flex items-center gap-1">Score <SortIcon field="score" /></span>
                                     </th>
                                     <th className="text-left px-4 py-3 font-bold text-[10px] uppercase tracking-wider text-gray-400">Category</th>
+                                    <th className="text-left px-4 py-3 font-bold text-[10px] uppercase tracking-wider text-gray-400">CRM</th>
                                     <th className="text-left px-4 py-3 font-bold text-[10px] uppercase tracking-wider text-gray-400 cursor-pointer select-none" onClick={() => toggleSort('created_at')}>
                                         <span className="flex items-center gap-1">Date <SortIcon field="created_at" /></span>
                                     </th>
@@ -206,6 +208,17 @@ const Dashboard = () => {
                                             </span>
                                         </td>
                                         <td className="px-4 py-3 text-gray-300">{lead.category || '—'}</td>
+                                        <td className="px-4 py-3">
+                                            <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-bold ${
+                                                lead.crm_status === 'success'
+                                                    ? 'bg-green-500/20 text-green-400'
+                                                    : lead.crm_status === 'fail'
+                                                        ? 'bg-red-500/20 text-red-400'
+                                                        : 'bg-gray-500/20 text-gray-400'
+                                            }`}>
+                                                {lead.crm_status === 'success' ? 'Sent' : lead.crm_status === 'fail' ? 'Failed' : '—'}
+                                            </span>
+                                        </td>
                                         <td className="px-4 py-3 text-gray-400 text-xs">
                                             {lead.created_at ? new Date(lead.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
                                         </td>

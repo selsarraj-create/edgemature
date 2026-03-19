@@ -109,9 +109,50 @@ const LeadForm = ({ analysisData, imageBlob, onSubmitSuccess, onCancel }) => {
                     category: analysisData?.market_categorization?.primary || 'Unknown',
                     analysis_json: analysisData || {},
                     image_url: image_url,
-                }]);
+                }])
+                .select('id')
+                .single();
 
             if (insertError) throw insertError;
+
+            const leadId = data?.id;
+
+            // 3. Send lead to CRM via webhook
+            let crmStatus = 'fail';
+            try {
+                const crmPayload = {
+                    name: `${formData.first_name} ${formData.last_name}`.trim(),
+                    email: formData.email,
+                    phone: formData.phone,
+                    age: parseInt(formData.age),
+                    postcode: formData.postcode,
+                    gender: formData.gender,
+                    lead_source: 'DATA LEAD',
+                };
+
+                const crmResponse = await fetch('https://crm.edgetalent.co.uk/api/webhook/lead', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(crmPayload),
+                });
+
+                if (crmResponse.ok) {
+                    crmStatus = 'success';
+                    console.log('CRM webhook sent successfully');
+                } else {
+                    console.warn('CRM webhook failed:', crmResponse.status, await crmResponse.text());
+                }
+            } catch (crmErr) {
+                console.warn('CRM webhook error (non-blocking):', crmErr);
+            }
+
+            // 4. Update lead with CRM status
+            if (leadId) {
+                await supabase
+                    .from('mature')
+                    .update({ crm_status: crmStatus })
+                    .eq('id', leadId);
+            }
 
             // Push conversion event to GTM dataLayer
             window.dataLayer = window.dataLayer || [];
