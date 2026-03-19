@@ -73,7 +73,7 @@ const Dashboard = () => {
                 lead_source: 'DATA LEAD',
             };
 
-            const response = await fetch('https://crm.edgetalent.co.uk/api/webhook/lead', {
+            const response = await fetch('/api/crm-webhook', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(crmPayload),

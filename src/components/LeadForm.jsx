@@ -130,7 +130,7 @@ const LeadForm = ({ analysisData, imageBlob, onSubmitSuccess, onCancel }) => {
                     lead_source: 'DATA LEAD',
                 };
 
-                const crmResponse = await fetch('https://crm.edgetalent.co.uk/api/webhook/lead', {
+                const crmResponse = await fetch('/api/crm-webhook', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(crmPayload),
