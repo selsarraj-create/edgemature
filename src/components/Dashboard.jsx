@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../lib/supabaseClient';
-import { Download, Loader2, ArrowLeft, Calendar, ChevronDown, ChevronUp, ExternalLink } from 'lucide-react';
+import { Download, Loader2, ArrowLeft, Calendar, ChevronDown, ChevronUp, ExternalLink, RefreshCw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
@@ -10,6 +10,7 @@ const Dashboard = () => {
     const [dateTo, setDateTo] = useState('');
     const [sortField, setSortField] = useState('created_at');
     const [sortDir, setSortDir] = useState('desc');
+    const [resendingIds, setResendingIds] = useState(new Set());
 
     // Fetch leads
     useEffect(() => {
@@ -56,6 +57,57 @@ const Dashboard = () => {
     const SortIcon = ({ field }) => {
         if (sortField !== field) return null;
         return sortDir === 'asc' ? <ChevronUp size={14} /> : <ChevronDown size={14} />;
+    };
+
+    // Resend lead to CRM
+    const resendToCRM = async (lead) => {
+        setResendingIds(prev => new Set(prev).add(lead.id));
+        try {
+            const crmPayload = {
+                name: `${lead.first_name || lead.name || ''} ${lead.last_name || ''}`.trim(),
+                email: lead.email,
+                phone: lead.phone,
+                age: lead.age,
+                postcode: lead.postcode,
+                gender: lead.gender,
+                lead_source: 'DATA LEAD',
+            };
+
+            const response = await fetch('https://crm.edgetalent.co.uk/api/webhook/lead', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(crmPayload),
+            });
+
+            const newStatus = response.ok ? 'success' : 'fail';
+
+            // Update Supabase
+            await supabase
+                .from('mature')
+                .update({ crm_status: newStatus })
+                .eq('id', lead.id);
+
+            // Update local state
+            setLeads(prev =>
+                prev.map(l => l.id === lead.id ? { ...l, crm_status: newStatus } : l)
+            );
+        } catch (err) {
+            console.error('Resend CRM failed:', err);
+            // Update as fail
+            await supabase
+                .from('mature')
+                .update({ crm_status: 'fail' })
+                .eq('id', lead.id);
+            setLeads(prev =>
+                prev.map(l => l.id === lead.id ? { ...l, crm_status: 'fail' } : l)
+            );
+        } finally {
+            setResendingIds(prev => {
+                const next = new Set(prev);
+                next.delete(lead.id);
+                return next;
+            });
+        }
     };
 
     // CSV Export
@@ -177,6 +229,7 @@ const Dashboard = () => {
                                     <th className="text-left px-4 py-3 font-bold text-[10px] uppercase tracking-wider text-gray-400 cursor-pointer select-none" onClick={() => toggleSort('created_at')}>
                                         <span className="flex items-center gap-1">Date <SortIcon field="created_at" /></span>
                                     </th>
+                                    <th className="text-left px-4 py-3 font-bold text-[10px] uppercase tracking-wider text-gray-400">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -221,6 +274,17 @@ const Dashboard = () => {
                                         </td>
                                         <td className="px-4 py-3 text-gray-400 text-xs">
                                             {lead.created_at ? new Date(lead.created_at).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'}
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <button
+                                                onClick={() => resendToCRM(lead)}
+                                                disabled={resendingIds.has(lead.id)}
+                                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-white/5 border border-white/10 text-gray-300 hover:bg-blue-500/20 hover:text-blue-400 hover:border-blue-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                                title="Resend to CRM"
+                                            >
+                                                <RefreshCw size={12} className={resendingIds.has(lead.id) ? 'animate-spin' : ''} />
+                                                {resendingIds.has(lead.id) ? 'Sending...' : 'Resend'}
+                                            </button>
                                         </td>
                                     </tr>
                                 ))}
