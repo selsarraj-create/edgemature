@@ -21,7 +21,7 @@ const testimonials = [
         age: 12,
         text: "My mum uploaded my photo and the results were amazing! I got matched with a kids agency and already did a shoot for a clothing brand. It was so fun!",
         role: "Child Model",
-        image: "https://images.unsplash.com/photo-1595454223600-2d63b1fa5e51?auto=format&fit=crop&q=80&w=200&h=200"
+        image: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?auto=format&fit=crop&q=80&w=200&h=200"
     }
 ];
 
