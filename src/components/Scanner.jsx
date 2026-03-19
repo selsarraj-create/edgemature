@@ -110,7 +110,7 @@ const Scanner = () => {
                     Could You Be A <span className="text-brand-start">Model</span>?
                 </h1>
                 <p className="text-lg font-bold text-white mb-1">
-                    AI-Powered Analysis for Models 30+
+                    AI-Powered Analysis for Models of All Ages
                 </p>
                 <p className="text-sm text-gray-400 font-medium">
                     Find Out Instantly With Our AI Analysis
