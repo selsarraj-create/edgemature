@@ -46,8 +46,23 @@ async def crm_webhook_proxy(payload: CRMLeadPayload):
 
     try:
         crm_url = "https://crm.edgetalent.co.uk/api/webhook/lead"
-        # Send only CRM-relevant fields (exclude lead_id)
-        crm_data = payload.model_dump(exclude={"lead_id"})
+        # Build CRM payload manually (exclude lead_id, exclude None values)
+        crm_data = {
+            "name": payload.name,
+            "email": payload.email,
+            "phone": payload.phone,
+        }
+        if payload.age is not None:
+            crm_data["age"] = payload.age
+        if payload.postcode:
+            crm_data["postcode"] = payload.postcode
+        if payload.gender:
+            crm_data["gender"] = payload.gender
+        if payload.lead_source:
+            crm_data["lead_source"] = payload.lead_source
+        if payload.image_url:
+            crm_data["image_url"] = payload.image_url
+
         response = http_requests.post(
             crm_url,
             json=crm_data,
@@ -93,9 +108,8 @@ async def crm_webhook_proxy(payload: CRMLeadPayload):
         except Exception as e:
             print(f"Supabase update error: {e}")
 
-    status_code = 201 if crm_status == "success" else 502
     return JSONResponse(
-        status_code=status_code,
+        status_code=200,
         content={**crm_response_data, "crm_status": crm_status},
     )
 
