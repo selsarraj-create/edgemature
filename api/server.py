@@ -32,6 +32,7 @@ class CRMLeadPayload(BaseModel):
     gender: Optional[str] = None
     lead_source: Optional[str] = "DATA LEAD"
     image_url: Optional[str] = None
+    lead_id: Optional[str] = None
 
 @app.get("/api/health")
 async def health():
@@ -39,22 +40,64 @@ async def health():
 
 @app.post("/api/crm-webhook")
 async def crm_webhook_proxy(payload: CRMLeadPayload):
-    """Proxy CRM webhook calls to avoid CORS issues."""
+    """Proxy CRM webhook calls to avoid CORS issues. Optionally updates crm_status in Supabase."""
+    crm_status = "fail"
+    crm_response_data = {}
+
     try:
         crm_url = "https://crm.edgetalent.co.uk/api/webhook/lead"
+        # Send only CRM-relevant fields (exclude lead_id)
+        crm_data = payload.model_dump(exclude={"lead_id"})
         response = http_requests.post(
             crm_url,
-            json=payload.model_dump(),
+            json=crm_data,
             headers={"Content-Type": "application/json"},
             timeout=15,
         )
-        return JSONResponse(
-            status_code=response.status_code,
-            content=response.json() if response.headers.get("content-type", "").startswith("application/json") else {"detail": response.text},
-        )
+
+        if response.ok:
+            crm_status = "success"
+
+        try:
+            crm_response_data = response.json()
+        except:
+            crm_response_data = {"detail": response.text}
+
     except Exception as e:
         print(f"CRM Webhook Proxy Error: {e}")
-        return JSONResponse(status_code=502, content={"error": str(e)})
+        crm_response_data = {"error": str(e)}
+
+    # Update Supabase crm_status if lead_id provided
+    if payload.lead_id:
+        try:
+            supabase_url = os.environ.get("VITE_SUPABASE_URL") or os.environ.get("SUPABASE_URL")
+            service_key = os.environ.get("SUPABASE_SERVICE_ROLE_KEY") or os.environ.get("VITE_SUPABASE_ANON_KEY")
+
+            if supabase_url and service_key:
+                update_url = f"{supabase_url}/rest/v1/mature?id=eq.{payload.lead_id}"
+                update_resp = http_requests.patch(
+                    update_url,
+                    json={"crm_status": crm_status},
+                    headers={
+                        "apikey": service_key,
+                        "Authorization": f"Bearer {service_key}",
+                        "Content-Type": "application/json",
+                        "Prefer": "return=minimal",
+                    },
+                    timeout=10,
+                )
+                if not update_resp.ok:
+                    print(f"Supabase update failed: {update_resp.status_code} {update_resp.text}")
+            else:
+                print("Missing Supabase env vars for CRM status update")
+        except Exception as e:
+            print(f"Supabase update error: {e}")
+
+    status_code = 201 if crm_status == "success" else 502
+    return JSONResponse(
+        status_code=status_code,
+        content={**crm_response_data, "crm_status": crm_status},
+    )
 
 @app.post("/api/analyze")
 async def analyze_endpoint(file: UploadFile = File(...)):

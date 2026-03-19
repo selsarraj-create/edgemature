@@ -66,12 +66,13 @@ const Dashboard = () => {
             const crmPayload = {
                 name: `${lead.first_name || lead.name || ''} ${lead.last_name || ''}`.trim(),
                 email: lead.email,
-                phone: lead.phone,
+                phone: String(lead.phone || ''),
                 age: lead.age,
                 postcode: lead.postcode,
                 gender: lead.gender,
                 lead_source: 'DATA LEAD',
                 image_url: lead.image_url || null,
+                lead_id: lead.id,
             };
 
             const response = await fetch('/api/crm-webhook', {
@@ -80,34 +81,15 @@ const Dashboard = () => {
                 body: JSON.stringify(crmPayload),
             });
 
-            const newStatus = response.ok ? 'success' : 'fail';
+            const result = await response.json();
+            const newStatus = result.crm_status || (response.ok ? 'success' : 'fail');
 
-            // Update Supabase
-            const { error: updateError } = await supabase
-                .from('mature')
-                .update({ crm_status: newStatus })
-                .eq('id', lead.id);
-
-            if (updateError) {
-                console.error('Supabase update failed:', updateError, 'Lead ID:', lead.id);
-            }
-
-            // Update local state
+            // Update local state (backend already updated Supabase)
             setLeads(prev =>
                 prev.map(l => l.id === lead.id ? { ...l, crm_status: newStatus } : l)
             );
         } catch (err) {
             console.error('Resend CRM failed:', err);
-            // Update as fail
-            const { error: updateError } = await supabase
-                .from('mature')
-                .update({ crm_status: 'fail' })
-                .eq('id', lead.id);
-
-            if (updateError) {
-                console.error('Supabase fail-update also failed:', updateError);
-            }
-
             setLeads(prev =>
                 prev.map(l => l.id === lead.id ? { ...l, crm_status: 'fail' } : l)
             );
