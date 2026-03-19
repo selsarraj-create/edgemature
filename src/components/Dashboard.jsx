@@ -207,7 +207,7 @@ const Dashboard = () => {
                     </div>
                 ) : (
                     <div className="overflow-x-auto rounded-2xl border border-white/10">
-                        <table className="w-full text-sm">
+                        <table className="min-w-full text-sm whitespace-nowrap">
                             <thead>
                                 <tr className="bg-white/5 border-b border-white/10">
                                     <th className="text-left px-4 py-3 font-bold text-[10px] uppercase tracking-wider text-gray-400">Photo</th>
