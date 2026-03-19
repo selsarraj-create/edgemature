@@ -64,15 +64,15 @@ const Dashboard = () => {
         setResendingIds(prev => new Set(prev).add(lead.id));
         try {
             const crmPayload = {
-                name: `${lead.first_name || lead.name || ''} ${lead.last_name || ''}`.trim(),
-                email: lead.email,
+                name: `${lead.first_name || lead.name || ''} ${lead.last_name || ''}`.trim() || '',
+                email: lead.email || '',
                 phone: String(lead.phone || ''),
-                age: lead.age,
-                postcode: lead.postcode,
-                gender: lead.gender,
+                age: lead.age || null,
+                postcode: lead.postcode || '',
+                gender: lead.gender || '',
                 lead_source: 'DATA LEAD',
-                image_url: lead.image_url || null,
-                lead_id: lead.id,
+                image_url: lead.image_url || '',
+                lead_id: String(lead.id),
             };
 
             const response = await fetch('/api/crm-webhook', {

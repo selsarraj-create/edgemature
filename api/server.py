@@ -24,9 +24,9 @@ app.add_middleware(
 )
 
 class CRMLeadPayload(BaseModel):
-    name: str
-    email: str
-    phone: str
+    name: Optional[str] = ""
+    email: Optional[str] = ""
+    phone: Optional[str] = ""
     age: Optional[int] = None
     postcode: Optional[str] = None
     gender: Optional[str] = None
