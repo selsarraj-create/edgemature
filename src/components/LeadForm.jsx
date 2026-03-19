@@ -93,31 +93,7 @@ const LeadForm = ({ analysisData, imageBlob, onSubmitSuccess, onCancel }) => {
                 }
             }
 
-            // 2. Insert lead into 'mature' table
-            const { data, error: insertError } = await supabase
-                .from('mature')
-                .insert([{
-                    first_name: formData.first_name,
-                    last_name: formData.last_name,
-                    age: parseInt(formData.age),
-                    gender: formData.gender,
-                    phone: formData.phone,
-                    email: formData.email,
-                    postcode: formData.postcode,
-                    lead_code: '#MOD30-SCOUT',
-                    score: analysisData?.suitability_score || 0,
-                    category: analysisData?.market_categorization?.primary || 'Unknown',
-                    analysis_json: analysisData || {},
-                    image_url: image_url,
-                }])
-                .select('id')
-                .single();
-
-            if (insertError) throw insertError;
-
-            const leadId = data?.id;
-
-            // 3. Send lead to CRM via webhook
+            // 2. Send lead to CRM via webhook (before insert so we can store result)
             let crmStatus = 'fail';
             try {
                 const crmPayload = {
@@ -147,13 +123,26 @@ const LeadForm = ({ analysisData, imageBlob, onSubmitSuccess, onCancel }) => {
                 console.warn('CRM webhook error (non-blocking):', crmErr);
             }
 
-            // 4. Update lead with CRM status
-            if (leadId) {
-                await supabase
-                    .from('mature')
-                    .update({ crm_status: crmStatus })
-                    .eq('id', leadId);
-            }
+            // 3. Insert lead into 'mature' table (includes CRM status)
+            const { error: insertError } = await supabase
+                .from('mature')
+                .insert([{
+                    first_name: formData.first_name,
+                    last_name: formData.last_name,
+                    age: parseInt(formData.age),
+                    gender: formData.gender,
+                    phone: formData.phone,
+                    email: formData.email,
+                    postcode: formData.postcode,
+                    lead_code: '#MOD30-SCOUT',
+                    score: analysisData?.suitability_score || 0,
+                    category: analysisData?.market_categorization?.primary || 'Unknown',
+                    analysis_json: analysisData || {},
+                    image_url: image_url,
+                    crm_status: crmStatus,
+                }]);
+
+            if (insertError) throw insertError;
 
             // Push conversion event to GTM dataLayer
             window.dataLayer = window.dataLayer || [];

@@ -83,10 +83,14 @@ const Dashboard = () => {
             const newStatus = response.ok ? 'success' : 'fail';
 
             // Update Supabase
-            await supabase
+            const { error: updateError } = await supabase
                 .from('mature')
                 .update({ crm_status: newStatus })
                 .eq('id', lead.id);
+
+            if (updateError) {
+                console.error('Supabase update failed:', updateError, 'Lead ID:', lead.id);
+            }
 
             // Update local state
             setLeads(prev =>
@@ -95,10 +99,15 @@ const Dashboard = () => {
         } catch (err) {
             console.error('Resend CRM failed:', err);
             // Update as fail
-            await supabase
+            const { error: updateError } = await supabase
                 .from('mature')
                 .update({ crm_status: 'fail' })
                 .eq('id', lead.id);
+
+            if (updateError) {
+                console.error('Supabase fail-update also failed:', updateError);
+            }
+
             setLeads(prev =>
                 prev.map(l => l.id === lead.id ? { ...l, crm_status: 'fail' } : l)
             );
