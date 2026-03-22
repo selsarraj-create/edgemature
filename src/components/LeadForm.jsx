@@ -232,7 +232,7 @@ const LeadForm = ({ analysisData, imageBlob, onSubmitSuccess, onCancel }) => {
                                     <input
                                         type="number"
                                         required
-                                        min="30"
+                                        min="1"
                                         className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-gray-500 focus:outline-none focus:border-blue-500 transition-colors text-sm"
                                         value={formData.age}
                                         onChange={e => handleChange('age', e.target.value)}
