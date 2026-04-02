@@ -30,7 +30,7 @@ class CRMLeadPayload(BaseModel):
     age: Optional[int] = None
     postcode: Optional[str] = None
     gender: Optional[str] = None
-    lead_source: Optional[str] = "DATA LEAD"
+    lead_source: Optional[str] = "FB1"
     image_url: Optional[str] = None
     lead_id: Optional[str] = None
 

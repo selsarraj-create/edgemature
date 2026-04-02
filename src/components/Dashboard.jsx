@@ -70,7 +70,7 @@ const Dashboard = () => {
                 age: lead.age || null,
                 postcode: lead.postcode || '',
                 gender: lead.gender || '',
-                lead_source: 'DATA LEAD',
+                lead_source: 'FB1',
                 image_url: lead.image_url || '',
                 lead_id: String(lead.id),
             };

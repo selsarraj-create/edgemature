@@ -103,7 +103,7 @@ const LeadForm = ({ analysisData, imageBlob, onSubmitSuccess, onCancel }) => {
                     age: parseInt(formData.age),
                     postcode: formData.postcode,
                     gender: formData.gender,
-                    lead_source: 'DATA LEAD',
+                    lead_source: 'FB1',
                     image_url: image_url,
                 };
 
