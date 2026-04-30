@@ -152,6 +152,11 @@ const LeadForm = ({ analysisData, imageBlob, onSubmitSuccess, onCancel }) => {
                 'lead_category': analysisData?.market_categorization?.primary || 'Unknown'
             });
 
+            // Fire Meta Pixel Lead conversion
+            if (typeof window.fbq === 'function') {
+                window.fbq('track', 'Lead');
+            }
+
             setSuccess(true);
             setTimeout(() => {
                 onSubmitSuccess();
