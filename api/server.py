@@ -5,7 +5,73 @@ from pydantic import BaseModel
 from typing import Optional
 import os
 import sys
+import time
+import hashlib
 import requests as http_requests
+
+META_PIXEL_ID = "770548083475802"
+META_CAPI_TOKEN = os.environ.get("META_CAPI_TOKEN", "")
+
+def sha256_hash(value: str) -> str:
+    """Hash a value with SHA256 as Meta requires for user data."""
+    if not value:
+        return ""
+    return hashlib.sha256(value.strip().lower().encode("utf-8")).hexdigest()
+
+def send_meta_capi_event(email: str, phone: str, name: str, postcode: str = "", event_id: str = ""):
+    """Send a server-side Lead event to Meta Conversions API."""
+    if not META_CAPI_TOKEN:
+        print("META_CAPI_TOKEN not set, skipping CAPI")
+        return
+
+    try:
+        # Split name into first/last
+        name_parts = (name or "").strip().split(" ", 1)
+        fn = name_parts[0] if name_parts else ""
+        ln = name_parts[1] if len(name_parts) > 1 else ""
+
+        # Normalise UK phone to E.164
+        clean_phone = (phone or "").replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
+        if clean_phone.startswith("0"):
+            clean_phone = "+44" + clean_phone[1:]
+        elif not clean_phone.startswith("+"):
+            clean_phone = "+" + clean_phone
+
+        user_data = {}
+        if email:
+            user_data["em"] = [sha256_hash(email)]
+        if clean_phone:
+            user_data["ph"] = [sha256_hash(clean_phone)]
+        if fn:
+            user_data["fn"] = [sha256_hash(fn)]
+        if ln:
+            user_data["ln"] = [sha256_hash(ln)]
+        if postcode:
+            user_data["zp"] = [sha256_hash(postcode)]
+        user_data["country"] = [sha256_hash("gb")]
+
+        event = {
+            "event_name": "Lead",
+            "event_time": int(time.time()),
+            "action_source": "website",
+            "user_data": user_data,
+        }
+        if event_id:
+            event["event_id"] = event_id
+
+        capi_url = f"https://graph.facebook.com/v21.0/{META_PIXEL_ID}/events"
+        resp = http_requests.post(
+            capi_url,
+            params={"access_token": META_CAPI_TOKEN},
+            json={"data": [event]},
+            timeout=10,
+        )
+        if resp.ok:
+            print(f"Meta CAPI Lead event sent successfully")
+        else:
+            print(f"Meta CAPI error: {resp.status_code} {resp.text}")
+    except Exception as e:
+        print(f"Meta CAPI exception: {e}")
 
 # Fix path for Vercel import resolution
 sys.path.append(os.path.dirname(__file__))
@@ -107,6 +173,16 @@ async def crm_webhook_proxy(payload: CRMLeadPayload):
                 print("Missing Supabase env vars for CRM status update")
         except Exception as e:
             print(f"Supabase update error: {e}")
+
+    # Send Meta Conversions API event (server-side)
+    event_id = sha256_hash(f"{payload.email}-{int(time.time())}")
+    send_meta_capi_event(
+        email=payload.email or "",
+        phone=payload.phone or "",
+        name=payload.name or "",
+        postcode=payload.postcode or "",
+        event_id=event_id,
+    )
 
     return JSONResponse(
         status_code=200,
